@@ -1,0 +1,110 @@
+---
+title: "r4ds_chp23_markdown_formats"
+author: "Shade Wilson"
+date: "8/4/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown Formats
+Notes from R FOR DATA SCIENCE, an O'Reilly guide by Hadley Wickham and Garrett Grolemund. Availible online at <http://r4ds.had.co.nz/>. 
+
+PART FIVE: Communicate
+
+Chapter 23: R Markdown Formats
+
+-----------------------------------------------------------------------------
+
+Two ways to set the output of a document:
+
+1. Permanently, by modifying the YAML header:
+
+`title: "Viridis Demo"`
+
+`output: html_document`
+
+2. Transiently, by calling `rmarkdown::render()` by hand:
+```{r, eval = FALSE}
+rmarkdown::render(
+  "diamond-sizes.Rmd",
+  output_format = "word_document")
+)
+```
+
+This is useful if you want to programmatically produce multiple types of output
+
+### Output Options 
+Each output format is associated with an R function. Can either write `foo` or `pkg::foo`. If you
+omit `pkg`, the default is assumed to be **rmarkdown**.
+
+Ex: `rmarkdown::html_document()`
+
+TO override default parameters, need to use expanded output field. For example, if you wanted
+to render an html_document with a floating table of contents, you'd use:
+
+```{r}
+# output:
+#   html_document:
+#     toc: true
+#     toc_float: true
+```
+
+Can even render to multiple outputs by supplying a list of formats:
+```{r}
+# output:
+#   html_document:
+#     toc: true
+#     toc_float: true
+#   pdf_document: default
+```
+
+### Documents
+Number of basic variations on documents (other than html).
+
+* pdf_document makes a PDF with LaTeX (need to install).
+
+* word_document for Word docs (.docx)
+
+* odt_document for OpenDocument Text documents (.odt)
+
+* rtf_document for RIch Text Format documents (.rtf)
+
+* md_document for a Markdown document
+
+* github_document is a tailored version of md_document for GitHub sharing
+
+Remember, can turn off default display of code by setting global options in setup chunk: `knitr::opts_chunk$set(echo = FALSE)`
+
+For html_documents, another option is to make the code chunks hudden by defaul, but visible with a
+click:
+```{r}
+# output
+#   html_document
+#     code_folding: hide
+```
+
+### Notebooks
+A notebook (html_notebook) is a variation on an html_document
+
+blah
+
+### Presentations
+Can use R markdown to produce presentations.
+
+### Dashboards
+Useful way to communicate large amounts of information visually and quickly. **flexdashboard** makes
+it particularly easy to create dashboards using R markdown. 
+
+* each level 1 header (#) begins a new page
+
+* each lvl 2 header begins a new column
+
+* each lvl 3 header ebings a new row
+
+### Shiny
+add `runtime: shiny` to the header
+
+

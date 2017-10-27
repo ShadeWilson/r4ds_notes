@@ -1,0 +1,4 @@
+"0","comma <- function knitr::format(x, digits = 2, big.mark = "","")
+"
+"2","Error: unexpected symbol in ""comma <- function knitr""
+"

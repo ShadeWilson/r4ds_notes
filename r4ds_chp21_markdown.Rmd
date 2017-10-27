@@ -1,0 +1,307 @@
+---
+title: "r4ds_chp21_markdown.Rmd"
+author: "Shade Wilson"
+date: "7/30/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+```
+
+# Notes from R FOR DATA SCIENCE
+an O'Reilly guide by Hadley Wickham and Garrett Grolemund. Availible online at http://r4ds.had.co.nz/
+
+PART FIVE: Communicate
+
+Chapter 21: R Markdown
+
+cheat sheet availible at Help -> Cheatsheets -> R Markdown Cheat Sheet 
+
+Cntrl/Command+Shift+M: `%>%` 
+
+```{r iris_structure}
+str(iris)
+```
+
+## Producing Reports
+TO produce a complete report containing all text code and results, click "knit" or
+press Cmd/Ctrl-Shift-K. Can also use `rmarkdown::render("1-example.Rmd")`
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Text Formatting with Markdown
+*italic* or _italic_
+
+**bold** or __bold__
+
+`code`
+
+superscript^2^ and subscript~2~
+
+### Headings
+
+# 1st level Header
+
+## 2nd level Header
+
+### 3rd level header
+
+### Lists
+
+* bulleted list item 1
+
+* item 2
+
+    * item 2a
+  
+    * item 2b
+  
+1. Numbered list item 1
+
+1. Item 2. Numbers are incremented automatically in output
+
+### Links and images
+
+<https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf>
+
+[R Markdown Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+
+
+### Tables
+
+First Header | Second Header
+------------ | -------------
+Content Cell1| Content Cell2
+Content cEll3| Content Cell4
+
+## Code Chunks
+
+Three ways to insert a chunk of code:
+
+1. The keyboard chort cut Cmd/Ctrl-Alt-I
+
+1. The "insert" button icon in the editor toolbar
+
+1. By manually typing the chunk delimitors ```{r} and ```
+
+YOu can run code using Cmd/Cntrl-Enter. Use Cmd/Ctrl+Shift+Enter to run all code in a chunk
+
+### Chunk Name
+```{r chunk_name}
+name <- "chunk_name"
+statement <- stringr::str_c("My name is ", name, ".")
+print(statement)
+```
+
+Easier navigation, graphics produced by chunks will have more useful names, can set up
+networks of cached chunks to avoid reperforming expensive computations on every run
+
+chunk name "setup" has special behavior. When in notebook mode, the chunk named setup will be
+run automatically once, before any other code is run
+
+### Chunk options
+
+Chunk options can be customized with *options*, args supplied to the chunk header. 
+**knitr** provides almost 60 options to customize chunks
+
+See full list at <http://yihui.name/knitr/options>
+
+Most important set of options controls if your code block is executed adn what results 
+are inserted in the finished report:
+
+* `eval = FALSE` prevents code from being evaluated, therefore no results generated. Useful
+for displaying example code or disabling a large block of code without using commenting
+
+* `include = FALSE` runs the code but doesnt show the code or results in final document. Use
+for setup code you dont want clittering your report
+
+* `echo = FALSE` prevents code but not the results from appearing in finished file
+
+* `message = FALSE` of `warning = FALSE` prevents messages or warnings to appear in finished
+file
+
+* `results = 'hide'` hides printed output; `fig.show = 'hide'` hides plots
+
+* `error = TRUE` causes the render to continue even if code returns an error. Rare to use
+in a final report but useful to debug whats going on inside your .Rmd. DEfault error = FALSE 
+causes knit to fail if a single error exists
+
+Following table summarizes which types of output each option suppresses:
+
+Option | Run code | Show code | Output | Plots | Messages | Warnings
+------ | -------- | --------- | ------ | ----- | -------- | --------
+`eval = FALSE` | X |  | X | X | X | X
+`include = FALSE` |  | X | X | X | X | X
+`echo = FALSE` | | X | | | |
+`results = 'hide'` | | | X | | |
+`fig.show = 'hide'` | |  | | X | |
+`message = FALSE` | | | | | X |
+`warning = FALSE` | |  | | | | X
+
+### Table
+
+By defauly, R Markdown prints data frames and matrices as you'd see them in the consoles
+
+```{r}
+mtcars[1:5, 1:10]
+```
+
+If you'd prefer that data be displayed with additional fomratting, can use the `knitr::kable`
+function
+
+```{r knitr_kable}
+knitr::kable(
+  mtcars[1:5, ],
+  caption = "A knitr kable"
+)
+```
+
+Highly customizable. see `?knitr::kable`
+
+### Caching
+
+Normally each knit starts from a clean slate, which is good for reproducibility, but bad
+if you have some computations that take a long time. Solution is `cache = TRUE`. When set, 
+the output of chunk will be saved to a specially named file on disk. On subsequent runs,
+knitr will check if the code has changed; if not, it will reuse cached results
+
+Use with care! Based on code only, not dependencies
+
+Can avoid this problem with the dependson chunk option: `dependson = "var_it_dependson"`
+
+`dependson` should contain a character vector of every chunk that the catched chunk depends
+on. knitr will update the results for the cached chunk whenever it detects that one of its
+dependencies has changed.
+
+Can clear all caches with `knitr::clean_cach()`
+
+### Global Options
+
+Can set default chunk options with `knitr::opts_chunk$set()` in a code chunk
+
+Ex: when writing books and tutorials, Wickham sets:
+
+```{r book_opts, eval = FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+
+```
+
+If preparing a report, you might set:
+```{r report_opts, eval = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+```
+
+This hides the code by default, only showing chunks that you deliberately want to show.
+
+### Inline Code
+
+One other way to embed R code into an R Markdown doc: directly into text with `r `
+
+```{r smaller, include = FALSE}
+library(ggplot2)
+n <- 2.5
+smaller <- dplyr::filter(diamonds, carat <= n)
+```
+
+
+Ex: We have data about `r nrow(diamonds)` diamonds. Only `r nrow(diamonds) - nrow(smaller)`
+are larger than `r n` carats.
+
+When inserting numbers into text, `format()` is your friend. Allows you to set the number of
+digits so you dont print to a rediculous degree of accuracy. `big.mark` makes numbers
+easier to read. Combined into a helper function:
+```{r comma}
+comma <- function(x) format(x, digits = 2, big.mark = ",")
+comma(3442345)
+comma(.123498627)
+```
+
+
+### Exercises
+
+4.  
+```{r a, cache = TRUE}
+a <- runif(1)
+print(lubridate::now())
+```
+
+```{r b, cache = TRUE}
+b <- a + runif(1)
+print(lubridate::now())
+```
+
+```{r c, cache = TRUE}
+c <- a + 5
+print(lubridate::now())
+```
+
+```{r d, cache = TRUE}
+d <- c - b
+print(lubridate::now())
+```
+
+## YAML Header
+
+Can control many other "whole document" settings by tweaking the parameters of the YAML 
+(yet another markup language) header.
+
+### Parameters
+
+Parameters are useful when you want to re-render the same report with distinct values for
+various key inputs. TO declare one or more params, use `params` field.
+
+EX:
+
+output: html_document
+params:
+  my_class: "suv"
+  
+Can then use params$my_class to call specific class.
+
+You can write atomic vectors directly into the YAML header. You can also run arbitrary
+R expressions by prefacing the parameter value with !r. Good way to specify date/time params
+
+params:
+  start: !r lubridate::ymd("2015-01-01")
+  snapshot: !r lubridate::ymd_hms("2015-01-01 12:30:00")
+  
+Alternatively, if you need to produce many such parameterized reports, can use
+rmarkdown::render() with a list of params:
+
+`rmarkdown::render("fuel-econmy.Rmd", params = list(my_class = "suv")`
+
+Really good in conjunction with purrr:pwalk():
+
+```{r pwalk_ex}
+#rmarkdown::render("fuel-economy.Rmd", params = list(my_class = "suv"))
+
+reports <- dplyr::tibble(
+  class = unique(mpg$class),
+  filename = stringr::str_c("fuel-economy-", class, ".html"),
+  params = purrr::map(class, ~ list(my_class = .))
+)
+# reports %>%
+#   select(output_file = filename, params) %>%
+#   purrr::pwalk(rmarkdown::render, input = "fuel-economy.Rmd")
+  
+```
+
+### Learn about Git and GitHub
+
+<http://happygitwithr.com>
+
+<http://r-pkgs.had.co.nz/git.html>
