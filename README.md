@@ -1,5 +1,5 @@
 # r4ds_notes
-Notes from R for Data Science, a book by Garrett Grolemund and Hadley Wickham, for personal reference.
+Notes from *R for Data Science*, a book by Garrett Grolemund and Hadley Wickham, for personal reference.
 
 The book is available for free [here](http://r4ds.had.co.nz/). 
 
